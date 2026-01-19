@@ -2,13 +2,17 @@
   "name": "webwaka-core-ledger",
   "version": "0.0.0",
   "description": "Economic & Value Ledger - Financial ledger and transaction tracking",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "test": "echo \"No tests configured yet\" && exit 0",
-    "clean": "rm -rf dist"
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "clean": "rm -rf dist",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio"
   },
   "keywords": [
     "webwaka",
@@ -19,5 +23,17 @@
   "license": "TBD",
   "devDependencies": {
     "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@types/pg": "^8.16.0",
+    "@types/uuid": "^10.0.0",
+    "@vitest/coverage-v8": "^4.0.17",
+    "dotenv": "^17.2.3",
+    "drizzle-kit": "^0.31.8",
+    "drizzle-orm": "^0.45.1",
+    "pg": "^8.17.1",
+    "tsx": "^4.21.0",
+    "uuid": "^13.0.0",
+    "vitest": "^4.0.17"
   }
 }
