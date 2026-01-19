@@ -1,0 +1,23 @@
+{
+  "name": "webwaka-core-ledger",
+  "version": "0.0.0",
+  "description": "Economic & Value Ledger - Financial ledger and transaction tracking",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "echo \"No tests configured yet\" && exit 0",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "webwaka",
+    "ledger",
+    "financial"
+  ],
+  "author": "WebWaka Team",
+  "license": "TBD",
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  }
+}
