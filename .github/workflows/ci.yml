@@ -1,0 +1,107 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Validate mandatory files
+        run: |
+          echo "Checking for mandatory files..."
+          files=(
+            "README.md"
+            "module.manifest.json"
+            "module.contract.md"
+            "CHANGELOG.md"
+            "OWNERS.md"
+            "SECURITY.md"
+          )
+          
+          missing_files=()
+          for file in "${files[@]}"; do
+            if [ ! -f "$file" ]; then
+              missing_files+=("$file")
+            fi
+          done
+          
+          if [ ${#missing_files[@]} -ne 0 ]; then
+            echo "❌ Missing mandatory files:"
+            printf '%s\n' "${missing_files[@]}"
+            exit 1
+          fi
+          
+          echo "✓ All mandatory files present"
+      
+      - name: Validate module manifest
+        run: |
+          echo "Validating module.manifest.json..."
+          
+          if ! command -v jq &> /dev/null; then
+            sudo apt-get update && sudo apt-get install -y jq
+          fi
+          
+          # Check if manifest is valid JSON
+          if ! jq empty module.manifest.json 2>/dev/null; then
+            echo "❌ module.manifest.json is not valid JSON"
+            exit 1
+          fi
+          
+          # Check required fields
+          required_fields=("moduleId" "version" "class" "name" "description")
+          for field in "${required_fields[@]}"; do
+            if ! jq -e ".$field" module.manifest.json > /dev/null; then
+              echo "❌ Missing required field: $field"
+              exit 1
+            fi
+          done
+          
+          # Validate class is 'core'
+          class=$(jq -r '.class' module.manifest.json)
+          if [ "$class" != "core" ]; then
+            echo "❌ class must be 'core', got '$class'"
+            exit 1
+          fi
+          
+          echo "✓ module.manifest.json is valid"
+      
+      - name: Check for package.json (if exists)
+        run: |
+          if [ -f "package.json" ]; then
+            echo "package.json found, installing dependencies..."
+            npm ci
+            
+            echo "Running build (if configured)..."
+            if jq -e '.scripts.build' package.json > /dev/null; then
+              npm run build
+            else
+              echo "No build script found, skipping"
+            fi
+            
+            echo "Running tests (if configured)..."
+            if jq -e '.scripts.test' package.json > /dev/null; then
+              npm test
+            else
+              echo "No test script found, skipping"
+            fi
+          else
+            echo "No package.json found yet - implementation pending"
+          fi
+      
+      - name: Summary
+        run: |
+          echo "✅ CI validation passed"
+          echo "Repository is ready for implementation"

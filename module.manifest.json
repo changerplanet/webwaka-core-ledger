@@ -1,0 +1,16 @@
+{
+  "moduleId": "webwaka-core-ledger",
+  "version": "0.0.0",
+  "class": "core",
+  "name": "Ledger Core",
+  "description": "Economic & Value Ledger - Financial ledger and transaction tracking",
+  "repository": "https://github.com/changerplanet/webwaka-core-ledger",
+  "author": "WebWaka Team",
+  "license": "TBD",
+  "capabilities": [],
+  "dependencies": [],
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "main": "./dist/index.js"
+  }
+}
