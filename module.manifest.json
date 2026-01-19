@@ -1,16 +1,61 @@
 {
   "moduleId": "webwaka-core-ledger",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "class": "core",
   "name": "Ledger Core",
   "description": "Economic & Value Ledger - Financial ledger and transaction tracking",
   "repository": "https://github.com/changerplanet/webwaka-core-ledger",
   "author": "WebWaka Team",
   "license": "TBD",
-  "capabilities": [],
-  "dependencies": [],
+  "capabilities": [
+    {
+      "id": "ledger:account:open",
+      "name": "Open Account",
+      "description": "Create a new ledger account for a tenant"
+    },
+    {
+      "id": "ledger:event:record",
+      "name": "Record Event",
+      "description": "Record a financial event (credit/debit) to an account"
+    },
+    {
+      "id": "ledger:event:reverse",
+      "name": "Reverse Event",
+      "description": "Create a compensating reversal event"
+    },
+    {
+      "id": "ledger:balance:get",
+      "name": "Get Account Balance",
+      "description": "Calculate derived balance from event history"
+    },
+    {
+      "id": "ledger:statement:get",
+      "name": "Get Account Statement",
+      "description": "Retrieve account statement with running balances"
+    },
+    {
+      "id": "ledger:integrity:verify",
+      "name": "Verify Ledger Integrity",
+      "description": "Validate account integrity and event sequence"
+    }
+  ],
+  "dependencies": [
+    {
+      "moduleId": "webwaka-core-registry",
+      "version": "^0.0.0",
+      "required": false,
+      "description": "Module registration and capability resolution"
+    }
+  ],
   "exports": {
-    "types": "./dist/index.d.ts",
-    "main": "./dist/index.js"
+    "types": "./dist/src/index.d.ts",
+    "main": "./dist/src/index.js"
+  },
+  "invariants": {
+    "appendOnly": "Events are immutable once recorded",
+    "derivedBalances": "Balances are always calculated from event history, never stored",
+    "tenantIsolation": "All data is strictly isolated by tenantId",
+    "idempotency": "Duplicate events with same idempotencyKey are prevented",
+    "compensatingReversals": "Corrections via compensating events only, no updates/deletes"
   }
 }
