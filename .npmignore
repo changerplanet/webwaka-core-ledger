@@ -1,0 +1,49 @@
+# Source files (not needed in package)
+src/
+tests/
+__tests__/
+*.test.ts
+*.test.js
+*.spec.ts
+*.spec.js
+
+# Config files
+tsconfig.json
+vitest.config.ts
+jest.config.js
+.eslintrc*
+.prettierrc*
+
+# Development
+node_modules/
+.replit
+replit.md
+.vercel/
+attached_assets/
+
+# Documentation (keep README, CHANGELOG, LICENSE)
+OWNERS.md
+SECURITY.md
+module.contract.md
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Git
+.git/
+.gitignore
+.github/
+
+# Environment
+.env
+.env.*
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IMPORTANT: dist/ is NOT ignored - it's needed for the package!
