@@ -1,0 +1,251 @@
+
+✅ PHASE 3A — CORE RUNTIME / LEDGER INTEGRATION
+
+EXECUTION PROMPT (AUTHORITATIVE)
+
+⸻
+
+CONTEXT (READ FULLY — NON-NEGOTIABLE)
+
+You are executing Phase 3A of the WebWaka Modular Rebuild.
+
+This phase introduces the Core Runtime / Ledger Integration Layer, which sits below all Suites and above infrastructure only.
+
+This is a HEADLESS CORE MODULE.
+
+🚫 NO UI
+🚫 NO dashboards
+🚫 NO demo data
+🚫 NO pricing logic
+🚫 NO incentives logic
+🚫 NO payments execution
+🚫 NO subscription state machines
+
+This phase is foundational and cannot drift.
+
+⸻
+
+SOURCE OF TRUTH (IMMUTABLE)
+	•	WebWaka Ecosystem Constitution v1.5+
+	•	Nigeria-first, offline-first, deterministic, multi-tenant
+	•	All previous phases (Core Control, Pricing, Incentives, Entitlements, Dashboard Control) are already complete and locked
+	•	Neon (Postgres) is the canonical relational substrate
+	•	All code must be pure, auditable, deterministic
+
+⸻
+
+TARGET REPOSITORY (MUST BE CLONED FIRST)
+
+📦 Repository:
+
+changerplanet/webwaka-core-ledger
+
+⚠️ MANDATORY
+	•	You MUST clone this repo before writing any code
+	•	If cloning fails → STOP and report
+	•	All work happens on main
+	•	No branch protection
+	•	CI must fail loudly
+
+⸻
+
+PLATFORM
+
+🛠 Execution Platform: Replit
+📦 Language: TypeScript (Node.js 20)
+🧪 Testing: Jest
+🗄 Database: Neon (Postgres)
+
+⸻
+
+OBJECTIVE
+
+Implement the Core Ledger Runtime that provides:
+	•	Immutable, append-only financial/event ledger
+	•	Deterministic balance derivation
+	•	Auditable, replayable, tenant-isolated records
+	•	A single source of truth for ALL economic activity (pricing outputs, incentives outputs, payments outcomes later)
+
+This module does NOT decide what to charge or reward — it only records what happened.
+
+⸻
+
+REQUIRED DOMAIN CONCEPTS
+
+1️⃣ Ledger Account
+
+Represents a logical account (wallet, clearing account, revenue bucket, etc.)
+
+Fields (minimum):
+	•	accountId
+	•	tenantId
+	•	accountType
+	•	currency (NGN only)
+	•	metadata (JSON)
+	•	createdAt
+
+⸻
+
+2️⃣ Ledger Event (IMMUTABLE)
+
+Append-only events that affect accounts.
+
+Fields (minimum):
+	•	eventId
+	•	tenantId
+	•	accountId
+	•	direction (credit | debit)
+	•	amount (integer kobo)
+	•	currency (NGN)
+	•	sourceType (pricing | incentive | payment | adjustment | reversal)
+	•	sourceRef (string)
+	•	idempotencyKey
+	•	createdAt
+
+🚫 NO UPDATE
+🚫 NO DELETE
+
+Corrections happen only via compensating events.
+
+⸻
+
+3️⃣ Derived Balance
+
+Balances are:
+	•	NEVER stored
+	•	ALWAYS computed from events
+	•	Deterministic given event history
+
+⸻
+
+REQUIRED PUBLIC APIs
+
+openAccount(input)
+recordEvent(input)
+reverseEvent(input)
+getAccountBalance(accountId, atTime?)
+getAccountStatement(accountId, range?)
+verifyLedgerIntegrity(tenantId)
+
+All APIs MUST:
+	•	Require tenantId
+	•	Enforce NGN only
+	•	Be deterministic
+	•	Be side-effect free except persistence
+
+⸻
+
+DATABASE REQUIREMENTS (NEON)
+
+You MUST:
+	•	Define SQL schema for:
+	•	ledger_accounts
+	•	ledger_events
+	•	Enforce:
+	•	tenant isolation
+	•	idempotency via unique constraints
+	•	append-only behavior
+	•	No triggers that mutate data
+	•	Index for tenantId + accountId
+
+⸻
+
+INVARIANTS (HARD LOCKED)
+
+You MUST enforce and test:
+
+1️⃣ Append-only ledger
+2️⃣ No balance storage
+3️⃣ Idempotent event recording
+4️⃣ Tenant isolation (no cross-tenant reads)
+5️⃣ Deterministic replay
+6️⃣ Compensating reversals only
+7️⃣ NGN currency only
+
+Violation of ANY invariant = FAIL.
+
+⸻
+
+TESTING (MANDATORY)
+
+You MUST include tests proving:
+	•	Two identical inputs → identical ledger state
+	•	Duplicate idempotencyKey does NOT create duplicate events
+	•	Balance changes correctly after credit/debit
+	•	Reversal does NOT delete original event
+	•	Cross-tenant access throws error
+	•	Ledger integrity verification catches tampering
+
+Coverage target: ≥80%
+
+⸻
+
+MANIFEST & REGISTRY
+
+Update:
+	•	module.manifest.json
+	•	class: core
+	•	capabilities:
+	•	ledger:account.open
+	•	ledger:event.record
+	•	ledger:event.reverse
+	•	ledger:balance.read
+	•	ledger:integrity.verify
+
+NO enabling for tenants yet.
+
+⸻
+
+STRICT PROHIBITIONS
+
+❌ No pricing calculations
+❌ No incentive calculations
+❌ No payment gateways
+❌ No wallets UI
+❌ No cron jobs
+❌ No background workers
+❌ No fake/demo values
+
+⸻
+
+REQUIRED FINAL DELIVERABLE
+
+Produce a Phase 3A Completion Report with:
+
+A. Schema Summary
+
+Tables, constraints, and invariants
+
+B. API Summary
+
+Methods, inputs, outputs
+
+C. Test Proof
+
+List of invariant-proving tests
+
+D. Hard-Stop Proof
+
+Explicit statement showing:
+
+“Any Suite can emit a pricing/incentive result into the ledger and later derive balances and proofs deterministically.”
+
+⸻
+
+⛔ HARD STOP
+
+After completion:
+
+⛔ STOP
+⛔ DO NOT proceed to Phase 3B
+⛔ Await explicit authorization
+
+⸻
+
+ACKNOWLEDGEMENT FORMAT (MANDATORY)
+
+Reply only with:
+
+“Phase 3A acknowledged. Cloning repo and proceeding exactly as instructed.”
+
+Then execute.
